@@ -35,4 +35,16 @@ public class User { // Classe que representa uma tabela do banco
 
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+
+    @PrePersist // quando um usuário novo for salvo -- roda antes de inserir
+    public void prePersist() {
+        LocalDateTime now = LocalDateTime.now();
+        this.createdAt = now;
+        this.updatedAt = now;
+    }
+
+    @PreUpdate // quando um usuário existente for atualizado -- roda antes de salvar
+    public void preUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
 }
