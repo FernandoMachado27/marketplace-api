@@ -2,10 +2,13 @@ package com.marketplace.marketplace_api.user.service;
 
 import com.marketplace.marketplace_api.shared.exception.BusinessException;
 import com.marketplace.marketplace_api.user.dto.CreateUserRequest;
+import com.marketplace.marketplace_api.user.dto.UserResponse;
 import com.marketplace.marketplace_api.user.entity.User;
 import com.marketplace.marketplace_api.user.enums.Role;
 import com.marketplace.marketplace_api.user.repository.UserRepository;
+import org.springframework.stereotype.Service;
 
+@Service
 public class UserService { // Contém as regras de negócio
 
     private final UserRepository userRepository;
@@ -14,7 +17,7 @@ public class UserService { // Contém as regras de negócio
         this.userRepository =  userRepository;
     }
 
-    public User createUser(CreateUserRequest request) {
+    public UserResponse createUser(CreateUserRequest request) {
         validateEmailUniqueness(request.getEmail());
 
         User user = new User();
@@ -28,7 +31,16 @@ public class UserService { // Contém as regras de negócio
             user.setRole(request.getRole());
         }
 
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+
+        return new UserResponse(
+                savedUser.getId(),
+                savedUser.getName(),
+                savedUser.getEmail(),
+                savedUser.getRole(),
+                savedUser.getCreatedAt(),
+                savedUser.getUpdatedAt()
+        );
     }
 
     private void validateEmailUniqueness(String email) {

@@ -25,5 +25,4 @@ public class CreateUserRequest { // DTO para representar os dados que entram e s
     private String password;
 
     private Role role;
-
 }
