@@ -1,4 +1,4 @@
-package com.marketplace.marketplace_api.shared.exception;
+package com.marketplace.marketplace_api.shared.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
