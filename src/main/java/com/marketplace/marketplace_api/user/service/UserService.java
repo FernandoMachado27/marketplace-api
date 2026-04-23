@@ -39,7 +39,7 @@ public class UserService { // Contém as regras de negócio
 
         User savedUser = userRepository.save(user);
 
-        return toResponse(user);
+        return toResponse(savedUser);
     }
 
     private void validateEmailUniqueness(String email) {
