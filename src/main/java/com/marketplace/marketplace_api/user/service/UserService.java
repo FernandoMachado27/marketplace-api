@@ -10,6 +10,8 @@ import com.marketplace.marketplace_api.user.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserService { // Contém as regras de negócio
 
@@ -37,14 +39,7 @@ public class UserService { // Contém as regras de negócio
 
         User savedUser = userRepository.save(user);
 
-        return new UserResponse(
-                savedUser.getId(),
-                savedUser.getName(),
-                savedUser.getEmail(),
-                savedUser.getRole(),
-                savedUser.getCreatedAt(),
-                savedUser.getUpdatedAt()
-        );
+        return toResponse(user);
     }
 
     private void validateEmailUniqueness(String email) {
@@ -56,6 +51,17 @@ public class UserService { // Contém as regras de negócio
     public UserResponse getUserById(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id)); // se não encontrar lance essa exceção
+        return toResponse(user);
+    }
+
+    public List<UserResponse> getAllUsers() {
+        return userRepository.findAll()
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    private UserResponse toResponse(User user) {
         return new UserResponse(
                 user.getId(),
                 user.getName(),
