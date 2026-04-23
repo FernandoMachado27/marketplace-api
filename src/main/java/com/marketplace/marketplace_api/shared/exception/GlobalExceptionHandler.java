@@ -1,5 +1,6 @@
 package com.marketplace.marketplace_api.shared.exception;
 
+import com.marketplace.marketplace_api.shared.response.ApiErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -50,6 +51,21 @@ public class GlobalExceptionHandler {
                 HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
                 "An unexpected error occurred",
                 List.of(ex.getMessage()),
+                request.getRequestURI()
+        );
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ApiErrorResponse handleResourceNotFoundException(
+            ResourceNotFoundException ex,
+            HttpServletRequest request
+    ) {
+        return new ApiErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.NOT_FOUND.value(),
+                HttpStatus.NOT_FOUND.getReasonPhrase(),
+                ex.getMessage(),
+                List.of(),
                 request.getRequestURI()
         );
     }

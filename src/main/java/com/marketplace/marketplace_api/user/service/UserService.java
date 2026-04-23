@@ -1,6 +1,7 @@
 package com.marketplace.marketplace_api.user.service;
 
 import com.marketplace.marketplace_api.shared.exception.BusinessException;
+import com.marketplace.marketplace_api.shared.exception.ResourceNotFoundException;
 import com.marketplace.marketplace_api.user.dto.CreateUserRequest;
 import com.marketplace.marketplace_api.user.dto.UserResponse;
 import com.marketplace.marketplace_api.user.entity.User;
@@ -50,5 +51,18 @@ public class UserService { // Contém as regras de negócio
         if (userRepository.existsByEmail(email)) {
             throw new BusinessException("Email is already registered");
         }
+    }
+
+    public UserResponse getUserById(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id)); // se não encontrar lance essa exceção
+        return new UserResponse(
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getRole(),
+                user.getCreatedAt(),
+                user.getUpdatedAt()
+        );
     }
 }
