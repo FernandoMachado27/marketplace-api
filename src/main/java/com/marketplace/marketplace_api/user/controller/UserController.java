@@ -1,6 +1,7 @@
 package com.marketplace.marketplace_api.user.controller;
 
 import com.marketplace.marketplace_api.user.dto.CreateUserRequest;
+import com.marketplace.marketplace_api.user.dto.UpdateUserRequest;
 import com.marketplace.marketplace_api.user.dto.UserResponse;
 import com.marketplace.marketplace_api.user.service.UserService;
 import jakarta.validation.Valid;
@@ -33,5 +34,10 @@ public class UserController {
     @GetMapping
     public List<UserResponse> getAllUsers() {
         return userService.getAllUsers();
+    }
+
+    @PutMapping("/{id}")
+    public UserResponse updateUser(@PathVariable Long id, @Valid @RequestBody UpdateUserRequest request) {
+        return userService.updateUser(id, request);
     }
 }

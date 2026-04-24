@@ -3,6 +3,7 @@ package com.marketplace.marketplace_api.user.service;
 import com.marketplace.marketplace_api.shared.exception.BusinessException;
 import com.marketplace.marketplace_api.shared.exception.ResourceNotFoundException;
 import com.marketplace.marketplace_api.user.dto.CreateUserRequest;
+import com.marketplace.marketplace_api.user.dto.UpdateUserRequest;
 import com.marketplace.marketplace_api.user.dto.UserResponse;
 import com.marketplace.marketplace_api.user.entity.User;
 import com.marketplace.marketplace_api.user.enums.Role;
@@ -70,5 +71,31 @@ public class UserService { // Contém as regras de negócio
                 user.getCreatedAt(),
                 user.getUpdatedAt()
         );
+    }
+
+    public UserResponse updateUser(Long id, UpdateUserRequest request) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+
+        validateEmailUniquenessForUpdate(request.getEmail(), user.getId());
+
+        user.setName(request.getName());
+        user.setEmail(request.getEmail());
+
+        if(request.getRole() != null) {
+            user.setRole(request.getRole());
+        }
+
+        User updateUser = userRepository.save(user);
+        return toResponse(updateUser);
+    }
+
+    private void validateEmailUniquenessForUpdate(String email, Long userId) {
+        userRepository.findByEmail(email)
+                .ifPresent(existingUser -> {
+                    if (!existingUser.getId().equals(userId)) {
+                        throw new BusinessException("Email is already registered");
+                    }
+                });
     }
 }
