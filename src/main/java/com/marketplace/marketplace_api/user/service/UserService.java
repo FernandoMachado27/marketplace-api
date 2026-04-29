@@ -68,6 +68,7 @@ public class UserService { // Contém as regras de negócio
                 user.getName(),
                 user.getEmail(),
                 user.getRole(),
+                user.getActive(),
                 user.getCreatedAt(),
                 user.getUpdatedAt()
         );
@@ -97,5 +98,13 @@ public class UserService { // Contém as regras de negócio
                         throw new BusinessException("Email is already registered");
                     }
                 });
+    }
+
+    public void deleteUser(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+
+        user.setActive(false);
+        userRepository.save(user);
     }
 }
