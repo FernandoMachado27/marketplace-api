@@ -36,6 +36,9 @@ public class User { // Classe que representa uma tabela do banco
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
+    @Column(nullable = false)
+    private Boolean active = true;
+
     @PrePersist // quando um usuário novo for salvo -- roda antes de inserir
     public void prePersist() {
         LocalDateTime now = LocalDateTime.now();
