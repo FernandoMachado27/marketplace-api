@@ -32,8 +32,8 @@ public class UserController {
     }
 
     @GetMapping
-    public List<UserResponse> getAllUsers() {
-        return userService.getAllUsers();
+    public List<UserResponse> getAllUsers(@RequestParam(required = false) Boolean active) { // parâmetro opcional
+        return userService.getAllUsers(active);
     }
 
     @PutMapping("/{id}")
