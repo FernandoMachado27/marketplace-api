@@ -55,9 +55,16 @@ public class UserService { // Contém as regras de negócio
         return toResponse(user);
     }
 
-    public List<UserResponse> getAllUsers() {
-        return userRepository.findAll()
-                .stream()
+    public List<UserResponse> getAllUsers(Boolean active) {
+        List<User> users;
+
+        if (active == null) {
+            users = userRepository.findAll();
+        } else {
+            users = userRepository.findByActive(active);
+        }
+
+        return users.stream()
                 .map(this::toResponse)
                 .toList();
     }
