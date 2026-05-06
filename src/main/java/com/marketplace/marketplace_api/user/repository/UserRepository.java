@@ -1,9 +1,10 @@
 package com.marketplace.marketplace_api.user.repository;
 
 import com.marketplace.marketplace_api.user.entity.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> { // JpaRepository retorna operações prontas
@@ -12,5 +13,5 @@ public interface UserRepository extends JpaRepository<User, Long> { // JpaReposi
 
     boolean existsByEmail(String email); // JPA verifica se já tem um usuário com este email
 
-    List<User> findByActive(Boolean active);
+    Page<User> findByActive(Boolean active, Pageable pageable);
 }
