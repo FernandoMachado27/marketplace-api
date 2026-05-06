@@ -8,10 +8,10 @@ import com.marketplace.marketplace_api.user.dto.UserResponse;
 import com.marketplace.marketplace_api.user.entity.User;
 import com.marketplace.marketplace_api.user.enums.Role;
 import com.marketplace.marketplace_api.user.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class UserService { // Contém as regras de negócio
@@ -25,7 +25,7 @@ public class UserService { // Contém as regras de negócio
     }
 
     public UserResponse createUser(CreateUserRequest request) {
-        validateEmailUniqueness(request.getEmail());
+        validateEmailUniqueness(request.getEmail()); // valida se o email já existe no banco
 
         User user = new User();
         user.setName(request.getName());
@@ -55,18 +55,16 @@ public class UserService { // Contém as regras de negócio
         return toResponse(user);
     }
 
-    public List<UserResponse> getAllUsers(Boolean active) {
-        List<User> users;
+    public Page<UserResponse> getAllUsers(Boolean active, Pageable pageable) {
+        Page<User> users;
 
         if (active == null) {
-            users = userRepository.findAll();
+            users = userRepository.findAll(pageable);
         } else {
-            users = userRepository.findByActive(active);
+            users = userRepository.findByActive(active, pageable);
         }
 
-        return users.stream()
-                .map(this::toResponse)
-                .toList();
+        return users.map(this::toResponse);
     }
 
     private UserResponse toResponse(User user) {
