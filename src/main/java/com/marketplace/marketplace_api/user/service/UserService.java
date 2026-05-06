@@ -88,10 +88,6 @@ public class UserService { // Contém as regras de negócio
         user.setName(request.getName());
         user.setEmail(request.getEmail());
 
-        if(request.getRole() != null) {
-            user.setRole(request.getRole());
-        }
-
         User updateUser = userRepository.save(user);
         return toResponse(updateUser);
     }
