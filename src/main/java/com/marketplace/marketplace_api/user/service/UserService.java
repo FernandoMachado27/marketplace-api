@@ -4,6 +4,7 @@ import com.marketplace.marketplace_api.shared.exception.BusinessException;
 import com.marketplace.marketplace_api.shared.exception.ResourceNotFoundException;
 import com.marketplace.marketplace_api.user.dto.CreateUserRequest;
 import com.marketplace.marketplace_api.user.dto.UpdateUserRequest;
+import com.marketplace.marketplace_api.user.dto.UpdateUserRoleRequest;
 import com.marketplace.marketplace_api.user.dto.UserResponse;
 import com.marketplace.marketplace_api.user.entity.User;
 import com.marketplace.marketplace_api.user.enums.Role;
@@ -88,10 +89,6 @@ public class UserService { // Contém as regras de negócio
         user.setName(request.getName());
         user.setEmail(request.getEmail());
 
-        if(request.getRole() != null) {
-            user.setRole(request.getRole());
-        }
-
         User updateUser = userRepository.save(user);
         return toResponse(updateUser);
     }
@@ -111,5 +108,16 @@ public class UserService { // Contém as regras de negócio
 
         user.setActive(false);
         userRepository.save(user);
+    }
+
+    public UserResponse updateUserRole(Long id, UpdateUserRoleRequest request) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+
+        user.setRole(request.getRole());
+
+        User updatedUser = userRepository.save(user);
+
+        return toResponse(updatedUser);
     }
 }

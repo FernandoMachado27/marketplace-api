@@ -19,6 +19,4 @@ public class UpdateUserRequest {
     @Email(message = "Email must be valid")
     @Size(max = 150, message = "Emails must have at most 150 characters")
     private String email;
-
-    private Role role;
 }
