@@ -2,6 +2,7 @@ package com.marketplace.marketplace_api.user.controller;
 
 import com.marketplace.marketplace_api.user.dto.CreateUserRequest;
 import com.marketplace.marketplace_api.user.dto.UpdateUserRequest;
+import com.marketplace.marketplace_api.user.dto.UpdateUserRoleRequest;
 import com.marketplace.marketplace_api.user.dto.UserResponse;
 import com.marketplace.marketplace_api.user.service.UserService;
 import jakarta.validation.Valid;
@@ -47,5 +48,10 @@ public class UserController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
+    }
+
+    @PatchMapping("/{id}/role")
+    public UserResponse updateUserRole(@PathVariable Long id, @Valid @RequestBody UpdateUserRoleRequest request) {
+        return userService.updateUserRole(id, request);
     }
 }
