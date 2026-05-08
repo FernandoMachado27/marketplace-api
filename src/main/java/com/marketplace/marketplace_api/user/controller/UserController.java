@@ -44,14 +44,19 @@ public class UserController {
         return userService.updateUser(id, request);
     }
 
+    @PatchMapping("/{id}/role")
+    public UserResponse updateUserRole(@PathVariable Long id, @Valid @RequestBody UpdateUserRoleRequest request) {
+        return userService.updateUserRole(id, request);
+    }
+
+    @PatchMapping("/{id}/activate")
+    public UserResponse updateUserActive(@PathVariable Long id) {
+        return userService.activateUser(id);
+    }
+
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
-    }
-
-    @PatchMapping("/{id}/role")
-    public UserResponse updateUserRole(@PathVariable Long id, @Valid @RequestBody UpdateUserRoleRequest request) {
-        return userService.updateUserRole(id, request);
     }
 }

@@ -2,10 +2,7 @@ package com.marketplace.marketplace_api.user.service;
 
 import com.marketplace.marketplace_api.shared.exception.BusinessException;
 import com.marketplace.marketplace_api.shared.exception.ResourceNotFoundException;
-import com.marketplace.marketplace_api.user.dto.CreateUserRequest;
-import com.marketplace.marketplace_api.user.dto.UpdateUserRequest;
-import com.marketplace.marketplace_api.user.dto.UpdateUserRoleRequest;
-import com.marketplace.marketplace_api.user.dto.UserResponse;
+import com.marketplace.marketplace_api.user.dto.*;
 import com.marketplace.marketplace_api.user.entity.User;
 import com.marketplace.marketplace_api.user.enums.Role;
 import com.marketplace.marketplace_api.user.repository.UserRepository;
@@ -115,6 +112,21 @@ public class UserService { // Contém as regras de negócio
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
 
         user.setRole(request.getRole());
+
+        User updatedUser = userRepository.save(user);
+
+        return toResponse(updatedUser);
+    }
+
+    public UserResponse activateUser(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+
+        if (Boolean.TRUE.equals(user.getActive())) {
+            return toResponse(user);
+        }
+
+        user.setActive(true);
 
         User updatedUser = userRepository.save(user);
 
