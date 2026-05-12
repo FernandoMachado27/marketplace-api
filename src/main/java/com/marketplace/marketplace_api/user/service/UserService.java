@@ -7,23 +7,19 @@ import com.marketplace.marketplace_api.user.entity.User;
 import com.marketplace.marketplace_api.user.enums.Role;
 import com.marketplace.marketplace_api.user.mapper.UserMapper;
 import com.marketplace.marketplace_api.user.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor // cria automaticamente um contrutor com todos os atributos final ou @NonNull
 public class UserService { // Contém as regras de negócio
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
-
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, UserMapper userMapper) {
-        this.userRepository =  userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.userMapper = userMapper;
-    }
 
     public UserResponse createUser(CreateUserRequest request) {
         validateEmailUniqueness(request.getEmail()); // valida se o email já existe no banco
