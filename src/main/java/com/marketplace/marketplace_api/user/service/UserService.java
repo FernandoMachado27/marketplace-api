@@ -5,6 +5,7 @@ import com.marketplace.marketplace_api.shared.exception.ResourceNotFoundExceptio
 import com.marketplace.marketplace_api.user.dto.*;
 import com.marketplace.marketplace_api.user.entity.User;
 import com.marketplace.marketplace_api.user.enums.Role;
+import com.marketplace.marketplace_api.user.mapper.UserMapper;
 import com.marketplace.marketplace_api.user.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,10 +17,12 @@ public class UserService { // Contém as regras de negócio
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserMapper userMapper;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, UserMapper userMapper) {
         this.userRepository =  userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.userMapper = userMapper;
     }
 
     public UserResponse createUser(CreateUserRequest request) {
@@ -38,7 +41,7 @@ public class UserService { // Contém as regras de negócio
 
         User savedUser = userRepository.save(user);
 
-        return toResponse(savedUser);
+        return userMapper.toResponse(savedUser);
     }
 
     private void validateEmailUniqueness(String email) {
@@ -50,7 +53,7 @@ public class UserService { // Contém as regras de negócio
     public UserResponse getUserById(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id)); // se não encontrar lance essa exceção
-        return toResponse(user);
+        return userMapper.toResponse(user);
     }
 
     public Page<UserResponse> getAllUsers(Boolean active, Pageable pageable) {
@@ -62,19 +65,7 @@ public class UserService { // Contém as regras de negócio
             users = userRepository.findByActive(active, pageable);
         }
 
-        return users.map(this::toResponse);
-    }
-
-    private UserResponse toResponse(User user) {
-        return new UserResponse(
-                user.getId(),
-                user.getName(),
-                user.getEmail(),
-                user.getRole(),
-                user.getActive(),
-                user.getCreatedAt(),
-                user.getUpdatedAt()
-        );
+        return users.map(userMapper::toResponse);
     }
 
     public UserResponse updateUser(Long id, UpdateUserRequest request) {
@@ -87,7 +78,7 @@ public class UserService { // Contém as regras de negócio
         user.setEmail(request.getEmail());
 
         User updateUser = userRepository.save(user);
-        return toResponse(updateUser);
+        return userMapper.toResponse(updateUser);
     }
 
     private void validateEmailUniquenessForUpdate(String email, Long userId) {
@@ -100,11 +91,7 @@ public class UserService { // Contém as regras de negócio
     }
 
     public void deleteUser(Long id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
-
-        user.setActive(false);
-        userRepository.save(user);
+        deactivateUser(id);
     }
 
     public UserResponse updateUserRole(Long id, UpdateUserRoleRequest request) {
@@ -115,7 +102,7 @@ public class UserService { // Contém as regras de negócio
 
         User updatedUser = userRepository.save(user);
 
-        return toResponse(updatedUser);
+        return userMapper.toResponse(updatedUser);
     }
 
     public UserResponse activateUser(Long id) {
@@ -123,13 +110,28 @@ public class UserService { // Contém as regras de negócio
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
 
         if (Boolean.TRUE.equals(user.getActive())) {
-            return toResponse(user);
+            return userMapper.toResponse(user);
         }
 
         user.setActive(true);
 
         User updatedUser = userRepository.save(user);
 
-        return toResponse(updatedUser);
+        return userMapper.toResponse(updatedUser);
+    }
+
+    public UserResponse deactivateUser(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+
+        if (Boolean.FALSE.equals(user.getActive())) {
+            return userMapper.toResponse(user);
+        }
+
+        user.setActive(false);
+
+        User updatedUser = userRepository.save(user);
+
+        return userMapper.toResponse(updatedUser);
     }
 }
