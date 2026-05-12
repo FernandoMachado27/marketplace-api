@@ -100,11 +100,7 @@ public class UserService { // Contém as regras de negócio
     }
 
     public void deleteUser(Long id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
-
-        user.setActive(false);
-        userRepository.save(user);
+        deactivateUser(id);
     }
 
     public UserResponse updateUserRole(Long id, UpdateUserRoleRequest request) {
@@ -127,6 +123,21 @@ public class UserService { // Contém as regras de negócio
         }
 
         user.setActive(true);
+
+        User updatedUser = userRepository.save(user);
+
+        return toResponse(updatedUser);
+    }
+
+    public UserResponse deactivateUser(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+
+        if (Boolean.FALSE.equals(user.getActive())) {
+            return toResponse(user);
+        }
+
+        user.setActive(false);
 
         User updatedUser = userRepository.save(user);
 
