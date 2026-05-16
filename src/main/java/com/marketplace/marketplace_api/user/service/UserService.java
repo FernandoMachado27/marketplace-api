@@ -47,8 +47,8 @@ public class UserService { // Contém as regras de negócio
     }
 
     public UserResponse getUserById(Long id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id)); // se não encontrar lance essa exceção
+        User user = findActiveUserById(id);
+
         return userMapper.toResponse(user);
     }
 
@@ -65,8 +65,7 @@ public class UserService { // Contém as regras de negócio
     }
 
     public UserResponse updateUser(Long id, UpdateUserRequest request) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+        User user = findActiveUserById(id);
 
         validateEmailUniquenessForUpdate(request.getEmail(), user.getId());
 
@@ -91,8 +90,7 @@ public class UserService { // Contém as regras de negócio
     }
 
     public UserResponse updateUserRole(Long id, UpdateUserRoleRequest request) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+        User user = findActiveUserById(id);
 
         user.setRole(request.getRole());
 
@@ -129,5 +127,10 @@ public class UserService { // Contém as regras de negócio
         User updatedUser = userRepository.save(user);
 
         return userMapper.toResponse(updatedUser);
+    }
+
+    private User findActiveUserById(Long id) {
+        return userRepository.findByIdAndActiveTrue(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Active user not found with id: " + id));
     }
 }
