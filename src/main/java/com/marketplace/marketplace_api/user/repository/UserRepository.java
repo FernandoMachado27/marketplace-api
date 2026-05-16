@@ -14,4 +14,6 @@ public interface UserRepository extends JpaRepository<User, Long> { // JpaReposi
     boolean existsByEmail(String email); // JPA verifica se já tem um usuário com este email
 
     Page<User> findByActive(Boolean active, Pageable pageable);
+
+    Optional<User> findByIdAndActiveTrue(Long id);
 }
