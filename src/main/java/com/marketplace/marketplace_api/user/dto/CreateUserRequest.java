@@ -23,6 +23,4 @@ public class CreateUserRequest { // DTO para representar os dados que entram e s
     @NotBlank(message = "Password is required")
     @Size(min = 6, message = "Password must have at least 6 characters")
     private String password;
-
-    private Role role;
 }

@@ -28,12 +28,7 @@ public class UserService { // Contém as regras de negócio
         user.setName(request.getName());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword())); // Senha criptografada
-
-        if (request.getRole() == null) {
-            user.setRole(Role.CUSTOMER);
-        } else {
-            user.setRole(request.getRole());
-        }
+        user.setRole(Role.CUSTOMER);
 
         User savedUser = userRepository.save(user);
 
