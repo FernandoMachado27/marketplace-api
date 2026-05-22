@@ -56,14 +56,23 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ApiErrorResponse handleResourceNotFoundException(
-            ResourceNotFoundException ex,
-            HttpServletRequest request
-    ) {
+    public ApiErrorResponse handleResourceNotFoundException(ResourceNotFoundException ex, HttpServletRequest request) {
         return new ApiErrorResponse(
                 LocalDateTime.now(),
                 HttpStatus.NOT_FOUND.value(),
                 HttpStatus.NOT_FOUND.getReasonPhrase(),
+                ex.getMessage(),
+                List.of(),
+                request.getRequestURI()
+        );
+    }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ApiErrorResponse handleInvalidCredentialsException(InvalidCredentialsException ex, HttpServletRequest request) {
+        return new ApiErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.UNAUTHORIZED.value(),
+                HttpStatus.UNAUTHORIZED.getReasonPhrase(),
                 ex.getMessage(),
                 List.of(),
                 request.getRequestURI()
