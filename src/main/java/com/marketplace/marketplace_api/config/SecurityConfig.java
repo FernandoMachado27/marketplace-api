@@ -13,7 +13,11 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/health", "/api/users/**").permitAll()   // Permite requisições sem autenticação para este caminho
+                        .requestMatchers(
+                                "/api/health",
+                                "/api/users/**",
+                                "/api/auth/login"
+                        ).permitAll()   // Permite requisições sem autenticação para este caminho
                         .anyRequest().authenticated()
                 );
 
