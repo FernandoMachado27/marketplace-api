@@ -19,10 +19,8 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/api/health",
-                                "/api/auth/login"
-                        ).permitAll()   // Permite requisições sem autenticação para este caminho
+                        .requestMatchers("/api/health", "/api/auth/login").permitAll()   // Permite requisições sem autenticação para este caminho
+                        .requestMatchers("/api/users/*/role").hasRole("ADMIN")          // Apenas admin pode alterar a role
                         .anyRequest().authenticated()
                 );
 
