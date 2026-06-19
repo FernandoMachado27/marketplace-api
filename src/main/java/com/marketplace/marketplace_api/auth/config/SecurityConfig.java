@@ -1,4 +1,4 @@
-package com.marketplace.marketplace_api.config;
+package com.marketplace.marketplace_api.auth.config;
 
 import com.marketplace.marketplace_api.auth.filter.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/health", "/api/auth/login").permitAll()   // Permite requisições sem autenticação para este caminho
+                        .requestMatchers("/api/health", "/api/auth/login", "/api/products").permitAll()   // Permite requisições sem autenticação para este caminho
                         .requestMatchers("/api/users/*/role").hasRole("ADMIN")          // Apenas admin pode alterar a role
                         .anyRequest().authenticated()
                 );
