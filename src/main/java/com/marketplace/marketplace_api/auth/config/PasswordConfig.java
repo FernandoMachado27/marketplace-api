@@ -1,4 +1,4 @@
-package com.marketplace.marketplace_api.config;
+package com.marketplace.marketplace_api.auth.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
