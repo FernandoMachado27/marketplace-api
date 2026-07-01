@@ -124,8 +124,12 @@ public class UserService { // Contém as regras de negócio
         return userMapper.toResponse(updatedUser);
     }
 
-    private User findActiveUserById(Long id) {
+    public User findActiveUserById(Long id) {
         return userRepository.findByIdAndActiveTrue(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Active user not found with id: " + id));
+    }
+
+    public UserResponse toResponse(User user) {
+        return userMapper.toResponse(user);
     }
 }
