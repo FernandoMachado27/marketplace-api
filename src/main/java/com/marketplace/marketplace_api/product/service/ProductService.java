@@ -41,4 +41,13 @@ public class ProductService {
         product.setActive(false);
         productRepository.save(product);
     }
+
+    public Product getById(Long id) {
+        return productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
+    }
+
+    public ProductResponse toResponse(Product product) {
+        return productMapper.toResponse(product);
+    }
 }
