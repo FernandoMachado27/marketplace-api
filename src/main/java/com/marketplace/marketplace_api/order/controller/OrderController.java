@@ -23,6 +23,11 @@ public class OrderController { // Pedido feito pelo comprador
         return orderService.getById(id);
     }
 
+    @PatchMapping("/{id}/pay")
+    public OrderResponse pay(@PathVariable Long id) {
+        return orderService.pay(id);
+    }
+
     @PatchMapping("/{id}/cancel")
     public void cancel(@PathVariable Long id) {
         orderService.cancel(id);

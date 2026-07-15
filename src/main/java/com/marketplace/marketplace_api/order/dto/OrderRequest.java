@@ -14,5 +14,4 @@ public class OrderRequest {
     private List<Long> productIds;
     // Map: productId -> quantidade
     private Map<Long, Integer> products;
-
 }
