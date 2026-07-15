@@ -3,6 +3,7 @@ package com.marketplace.marketplace_api.order.service;
 import com.marketplace.marketplace_api.order.dto.OrderRequest;
 import com.marketplace.marketplace_api.order.dto.OrderResponse;
 import com.marketplace.marketplace_api.order.entity.Order;
+import com.marketplace.marketplace_api.order.entity.OrderStatus;
 import com.marketplace.marketplace_api.order.mapper.OrderMapper;
 import com.marketplace.marketplace_api.order.repository.OrderRepository;
 import com.marketplace.marketplace_api.product.entity.Product;
@@ -75,6 +76,19 @@ public class OrderService {
         Order saved = orderRepository.save(order);
 
         // Retorna DTO usando mapper
+        return orderMapper.toResponse(saved);
+    }
+
+    public OrderResponse pay(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found with id: " + orderId));
+
+        if(!order.getActive()) {
+            throw new IllegalStateException("Cannot pay a cancelled order");
+        }
+
+        order.setStatus(OrderStatus.PAID);
+        Order saved = orderRepository.save(order);
         return orderMapper.toResponse(saved);
     }
 

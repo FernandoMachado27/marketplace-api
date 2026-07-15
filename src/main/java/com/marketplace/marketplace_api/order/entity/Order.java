@@ -41,4 +41,6 @@ public class Order {
     @Column(nullable = false)
     private Double totalPrice = 0.0;
 
+    private OrderStatus status = OrderStatus.PENDING;
+
 }
