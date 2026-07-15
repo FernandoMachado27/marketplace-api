@@ -21,6 +21,7 @@ public class OrderMapper {
         response.setProducts(order.getProducts().stream()
                 .map(productService::toResponse)
                 .toList());
+        response.setTotalPrice(order.getTotalPrice());
         response.setActive(order.getActive());
         response.setCreatedAt(order.getCreatedAt());
         return response;
