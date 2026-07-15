@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -11,5 +12,7 @@ public class OrderRequest {
 
     private Long customerId;
     private List<Long> productIds;
+    // Map: productId -> quantidade
+    private Map<Long, Integer> products;
 
 }

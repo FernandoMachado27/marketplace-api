@@ -17,5 +17,5 @@ public class OrderResponse {
     private List<ProductResponse> products;
     private Boolean active;
     private LocalDateTime createdAt;
-
+    private Double totalPrice;
 }
