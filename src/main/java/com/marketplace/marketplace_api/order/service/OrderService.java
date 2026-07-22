@@ -1,5 +1,6 @@
 package com.marketplace.marketplace_api.order.service;
 
+import com.marketplace.marketplace_api.auth.service.CurrentUserService;
 import com.marketplace.marketplace_api.order.dto.OrderRequest;
 import com.marketplace.marketplace_api.order.dto.OrderResponse;
 import com.marketplace.marketplace_api.order.entity.Order;
@@ -26,10 +27,11 @@ public class OrderService {
     private final ProductService productService;
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
+    private final CurrentUserService currentUserService;
 
     public OrderResponse create(OrderRequest request) {
         // Valida usuário ativo
-        User customer = userService.findActiveUserById(request.getCustomerId());
+        User customer = currentUserService.getCurrentUser();
 
         // Valida se enviou produtos
         if (request.getProducts() == null || request.getProducts().isEmpty()) {
@@ -96,6 +98,16 @@ public class OrderService {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found with id: " + id));
         return orderMapper.toResponse(order);
+    }
+
+    public List<OrderResponse> getMyOrders() {
+        User customer = currentUserService.getCurrentUser();
+
+        return orderRepository
+                .findByCustomerIdOrderByCreatedAtDesc(customer.getId())
+                .stream()
+                .map(orderMapper::toResponse)
+                .toList();
     }
 
     public void cancel(Long id) {
