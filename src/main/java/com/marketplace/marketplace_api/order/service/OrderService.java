@@ -6,6 +6,7 @@ import com.marketplace.marketplace_api.order.dto.OrderResponse;
 import com.marketplace.marketplace_api.order.entity.Order;
 import com.marketplace.marketplace_api.order.entity.OrderStatus;
 import com.marketplace.marketplace_api.order.mapper.OrderMapper;
+import com.marketplace.marketplace_api.order.orderitem.entity.OrderItem;
 import com.marketplace.marketplace_api.order.repository.OrderRepository;
 import com.marketplace.marketplace_api.product.entity.Product;
 import com.marketplace.marketplace_api.product.service.ProductService;
@@ -30,55 +31,59 @@ public class OrderService {
     private final CurrentUserService currentUserService;
 
     public OrderResponse create(OrderRequest request) {
-        // Valida usuário ativo
         User customer = currentUserService.getCurrentUser();
 
-        // Valida se enviou produtos
         if (request.getProducts() == null || request.getProducts().isEmpty()) {
-            throw new IllegalArgumentException("No products provided for the order");
+            throw new IllegalArgumentException(
+                    "At least one product is required"
+            );
         }
 
         Order order = new Order();
         order.setCustomer(customer);
+        order.setStatus(OrderStatus.PENDING);
 
-        List<Product> orderProducts = new ArrayList<>();
-        double total = 0.0;
+        List<OrderItem> items = new ArrayList<>();
+        double totalPrice = 0.0;
 
-        // Percorre o map de produtos e quantidades
-        for (Map.Entry<Long, Integer> entry : request.getProducts().entrySet()) {
+        for (Map.Entry<Long, Integer> entry
+                : request.getProducts().entrySet()) {
+
             Long productId = entry.getKey();
             Integer quantity = entry.getValue();
 
             if (quantity == null || quantity <= 0) {
                 throw new IllegalArgumentException(
-                        "Product quantity must be greater than 0 for productId: " + productId
+                        "Product quantity must be greater than 0 for productId: "
+                                + productId
                 );
             }
 
-            // Busca produto ativo
             Product product = productService.getById(productId);
-            if (!product.getActive()) {
+
+            if (!Boolean.TRUE.equals(product.getActive())) {
                 throw new ResourceNotFoundException(
-                        "Product inactive or not found: " + product.getName()
+                        "Active product not found with id: " + productId
                 );
             }
 
-            // Adiciona a quantidade correta no pedido
-            for (int i = 0; i < quantity; i++) {
-                orderProducts.add(product);
-                total += product.getPrice();
-            }
+            OrderItem item = new OrderItem();
+            item.setOrder(order);
+            item.setProduct(product);
+            item.setQuantity(quantity);
+            item.setUnitPrice(product.getPrice());
+
+            items.add(item);
+
+            totalPrice += product.getPrice() * quantity;
         }
 
-        // Seta produtos e total
-        order.setProducts(orderProducts);
-        order.setTotalPrice(total);
+        order.setItems(items);
+        order.setTotalPrice(totalPrice);
 
-        // Salva pedido
-        Order saved = orderRepository.save(order);
+        Order savedOrder = orderRepository.save(order);
 
-        // Retorna DTO usando mapper
-        return orderMapper.toResponse(saved);
+        return orderMapper.toResponse(savedOrder);
     }
 
     public OrderResponse pay(Long orderId) {

@@ -4,6 +4,7 @@ import com.marketplace.marketplace_api.product.dto.ProductRequest;
 import com.marketplace.marketplace_api.product.dto.ProductResponse;
 import com.marketplace.marketplace_api.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,7 +27,8 @@ public class ProductController {
     }
 
     @PatchMapping("/{id}/deactivate")
-    public void deactivate(Long id) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deactivate(@PathVariable Long id) {
         productService.deactivate(id);
     }
 
